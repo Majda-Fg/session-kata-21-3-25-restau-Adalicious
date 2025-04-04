@@ -5,13 +5,14 @@ const app = express();
 const port = 3000;
 
 const pool = new Pool({
-    connectionString: "postgresql://kata-adalicious_owner:npg_eruSlt6H9NJh@ep-raspy-haze-a29sfgc3-pooler.eu-central-1.aws.neon.tech/kata-adalicious?sslmode=require",
+    connectionString: connexion_DB,
     ssl: {
       rejectUnauthorized: false, // Nedded for SSL connection with Neon
     },
   });
 
 app.use(cors());
+app.use(express.json())
 
 app.get("/menu", async (req, res) => {
     const result = await pool.query("SELECT * from products")
@@ -24,22 +25,26 @@ app.get("/order", async (req, res) => {
 })
 
 app.get("/order/:id", async (req, res) => {
-    const result = await pool.query("SELECT * from commands WHERE id = $1")
-    res.json(result.rows)
+    const productId = req.params.id
+    const result = await pool.query("SELECT * from commands WHERE id = $1", [productId])
+    console.log(res.json(result.rows))
 })
 
 app.post("/order", async (req, res) => {
-    const result = await pool.query("INSERT INTO commands ")
+    const {command_num, username, product_id} = req.body
+    const result = await pool.query("INSERT INTO commands (command_num, username, product_id) VALUES ($1, $2, $3) RETURNING command_num, username, product_id", [command_num, username, product_id])
     res.json(result.rows)
 })
 
 app.put("/order/:id", async (req, res) => {
-    const result = await pool.query("UPDATE * from commands")
+    const {command_num, username, product_id} = req.body
+    const result = await pool.query("UPDATE commands SET command_num = $1, username = $2, product_id = $3 WHERE id=$1 RETURNING command_num, username, product_id", [command_num, username, product_id])
     res.json(result.rows)
 })
 
 app.delete("/order/:id", async (req, res) => {
-    const result = await pool.query("DELETE * from commands")
+    const productId = req.params.id
+    const result = await pool.query("DELETE from commands WHERE id = $1", [productId])
     res.json(result.rows)
 })
 

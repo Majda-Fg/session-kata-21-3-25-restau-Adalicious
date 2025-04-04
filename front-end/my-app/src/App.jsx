@@ -1,19 +1,32 @@
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import Form from './Form'
+import Menu from './Menu'
+import Order from './Order'
 
-function App() {
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Form/>
+  },
+  {
+    path: '/menu',
+    element: <Menu/>
+  }
+  // ,
+  // {
+  //   path: '/order',
+  //   element: <Product/>
+  // }
+])
 
-
+export default function App() {
   return (
-    <div>
-      <h1>Bienvenue sur Adalicious 🥦 </h1>
-      <h2>Pour commencer peut-tu indiquer ton prénom :</h2>
-      <input></input>
-      <button>Valider</button>
-    </div>
-  )
+    <RouterProvider router={router} />
+    // <Form />
+    // <Menu />
+    // ,
+    // <Order />
+  );
 }
-
-export default App
